@@ -1,0 +1,63 @@
+{
+  "mode": "auto",
+  "nodes": [
+    {
+      "id": "start",
+      "type": "start",
+      "text": "Начало"
+    },
+    {
+      "id": "read",
+      "type": "input_output",
+      "text": "Получить данные пользователя и проверить входные параметры"
+    },
+    {
+      "id": "check",
+      "type": "decision",
+      "text": "Данные корректны?"
+    },
+    {
+      "id": "work",
+      "type": "process",
+      "text": "Обработать данные"
+    },
+    {
+      "id": "error",
+      "type": "process",
+      "text": "Показать ошибку"
+    },
+    {
+      "id": "end",
+      "type": "end",
+      "text": "Конец"
+    }
+  ],
+  "edges": [
+    {
+      "from": "start",
+      "to": "read"
+    },
+    {
+      "from": "read",
+      "to": "check"
+    },
+    {
+      "from": "check",
+      "to": "work",
+      "label": "Да"
+    },
+    {
+      "from": "check",
+      "to": "error",
+      "label": "Нет"
+    },
+    {
+      "from": "work",
+      "to": "end"
+    },
+    {
+      "from": "error",
+      "to": "end"
+    }
+  ]
+}

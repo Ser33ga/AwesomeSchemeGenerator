@@ -1,0 +1,31 @@
+{
+"mode": "manual",
+"nodes": [
+{"id": "start", "type": "start", "text": "Начало", "position": {"x": 200, "y": 50}},
+{"id": "input_m", "type": "input_output", "text": "Ввести номер месяца m (1-12)", "position": {"x": 200, "y": 150}},
+{"id": "input_v", "type": "input_output", "text": "Ввести признак високосного года v (1 - високосный, 0 - не високосный)", "position": {"x": 200, "y": 250}},
+{"id": "dec_31", "type": "decision", "text": "m = 1, 3, 5, 7, 8, 10, 12?", "position": {"x": 200, "y": 400}},
+{"id": "out_31", "type": "input_output", "text": "Вывести 31", "position": {"x": 600, "y": 400}},
+{"id": "dec_30", "type": "decision", "text": "m = 4, 6, 9, 11?", "position": {"x": 200, "y": 550}},
+{"id": "out_30", "type": "input_output", "text": "Вывести 30", "position": {"x": 600, "y": 550}},
+{"id": "dec_leap", "type": "decision", "text": "v = 1?", "position": {"x": 200, "y": 700}},
+{"id": "out_29", "type": "input_output", "text": "Вывести 29", "position": {"x": 600, "y": 700}},
+{"id": "out_28", "type": "input_output", "text": "Вывести 28", "position": {"x": 600, "y": 850}},
+{"id": "end", "type": "end", "text": "Конец", "position": {"x": 1000, "y": 850}}
+],
+"edges": [
+{"from": "start", "to": "input_m", "from_port": "s", "to_port": "n"},
+{"from": "input_m", "to": "input_v", "from_port": "s", "to_port": "n"},
+{"from": "input_v", "to": "dec_31", "from_port": "s", "to_port": "n"},
+{"from": "dec_31", "to": "out_31", "label": "Да", "from_port": "e", "to_port": "w"},
+{"from": "dec_31", "to": "dec_30", "label": "Нет", "from_port": "s", "to_port": "n"},
+{"from": "out_31", "to": "end", "from_port": "e", "to_port": "nw"},
+{"from": "dec_30", "to": "out_30", "label": "Да", "from_port": "e", "to_port": "w"},
+{"from": "dec_30", "to": "dec_leap", "label": "Нет", "from_port": "s", "to_port": "n"},
+{"from": "out_30", "to": "end", "from_port": "e", "to_port": "n"},
+{"from": "dec_leap", "to": "out_29", "label": "Да", "from_port": "e", "to_port": "w"},
+{"from": "dec_leap", "to": "out_28", "label": "Нет", "from_port": "s", "to_port": "n"},
+{"from": "out_29", "to": "end", "from_port": "e", "to_port": "ne"},
+{"from": "out_28", "to": "end", "from_port": "e", "to_port": "w"}
+]
+}

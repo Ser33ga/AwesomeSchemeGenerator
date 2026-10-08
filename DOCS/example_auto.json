@@ -1,0 +1,63 @@
+{
+  "mode": "auto",
+  "nodes": [
+    {
+      "id": "start",
+      "type": "start",
+      "text": "Начало"
+    },
+    {
+      "id": "input",
+      "type": "input_output",
+      "text": "Ввести n"
+    },
+    {
+      "id": "check",
+      "type": "decision",
+      "text": "n > 0?"
+    },
+    {
+      "id": "positive",
+      "type": "input_output",
+      "text": "Вывести «Положительное»"
+    },
+    {
+      "id": "other",
+      "type": "input_output",
+      "text": "Вывести «Не положительное»"
+    },
+    {
+      "id": "end",
+      "type": "end",
+      "text": "Конец"
+    }
+  ],
+  "edges": [
+    {
+      "from": "start",
+      "to": "input"
+    },
+    {
+      "from": "input",
+      "to": "check"
+    },
+    {
+      "from": "check",
+      "to": "positive",
+      "label": "Да"
+    },
+    {
+      "from": "check",
+      "to": "other",
+      "label": "Нет"
+    },
+    {
+      "from": "positive",
+      "to": "end"
+    },
+    {
+      "from": "other",
+      "to": "end"
+    }
+  ]
+}

@@ -1,0 +1,84 @@
+{
+  "mode": "manual",
+  "nodes": [
+    {
+      "id": "start",
+      "type": "start",
+      "text": "Начало",
+      "position": {
+        "x": 200,
+        "y": 60
+      }
+    },
+    {
+      "id": "check",
+      "type": "decision",
+      "text": "Всё в порядке?",
+      "position": {
+        "x": 200,
+        "y": 200
+      }
+    },
+    {
+      "id": "yes",
+      "type": "process",
+      "text": "Продолжить работу",
+      "position": {
+        "x": 60,
+        "y": 380
+      }
+    },
+    {
+      "id": "no",
+      "type": "process",
+      "text": "Исправить ошибку",
+      "position": {
+        "x": 360,
+        "y": 380
+      }
+    },
+    {
+      "id": "end",
+      "type": "end",
+      "text": "Конец",
+      "position": {
+        "x": 200,
+        "y": 540
+      }
+    }
+  ],
+  "edges": [
+    {
+      "from": "start",
+      "to": "check",
+      "from_port": "s",
+      "to_port": "n"
+    },
+    {
+      "from": "check",
+      "to": "yes",
+      "label": "Да",
+      "from_port": "sw",
+      "to_port": "n"
+    },
+    {
+      "from": "check",
+      "to": "no",
+      "label": "Нет",
+      "from_port": "se",
+      "to_port": "n"
+    },
+    {
+      "from": "yes",
+      "to": "end",
+      "from_port": "s",
+      "to_port": "w"
+    },
+    {
+      "from": "no",
+      "to": "end",
+      "from_port": "s",
+      "to_port": "e"
+    }
+  ]
+}
