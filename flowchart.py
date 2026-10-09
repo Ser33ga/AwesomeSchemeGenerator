@@ -74,17 +74,30 @@ def validate(doc):
             position(node['position'], f"{n}.position")
     for i, edge in enumerate(edges):
         n = f"edges[{i}]"
-        if not isinstance(edge, dict) or not {'from', 'to'} <= set(edge) or set(edge) - {'from', 'to', 'label', 'from_port', 'to_port'}:
-            fail(f"{n}: expected from, to and optional label, from_port, to_port")
+        allowed = {'from', 'to', 'label', 'from_port', 'to_port'}
+        if mode == 'manual':
+            allowed.add('points')
+        if not isinstance(edge, dict) or not {'from', 'to'} <= set(edge) or set(edge) - allowed:
+            fail(f"{n}: expected from, to and optional label, from_port, to_port" + (", points" if mode == 'manual' else ""))
         if not isinstance(edge['from'], str) or not isinstance(edge['to'], str) or edge['from'] not in ids or edge['to'] not in ids:
             fail(f"{n}: from/to must reference existing node IDs")
-        if edge['from'] == edge['to']:
+        if edge['from'] == edge['to'] and mode != 'manual':
             fail(f"{n}: self-connections are not supported")
         if 'label' in edge:
             wrap_label(edge['label'], f"{n}.label", 16)
         for key in ('from_port', 'to_port'):
             if key in edge and edge[key] not in PORTS:
                 fail(f"{n}.{key}: choose n, s, e, w, ne, nw, se, sw")
+        if 'points' in edge:
+            if not isinstance(edge['points'], list):
+                fail(f"{n}.points: expected list of coordinates")
+            for j, p in enumerate(edge['points']):
+                if isinstance(p, dict):
+                    position(p, f"{n}.points[{j}]")
+                elif isinstance(p, (list, tuple)) and len(p) == 2 and all(isinstance(v, (int, float)) and math.isfinite(v) and abs(v) <= 10000 for v in p):
+                    pass
+                else:
+                    fail(f"{n}.points[{j}]: expected {{'x': number, 'y': number}} or [x, y]")
     return mode
 
 def dot_source(doc, mode):
@@ -143,6 +156,15 @@ def render_manual(doc, output):
     right = max(n['x'] + n['w']/2 for n in graph.values())
     top = min(n['y'] - n['h']/2 for n in graph.values())
     bottom = max(n['y'] + n['h']/2 for n in graph.values())
+    for edge in doc['edges']:
+        if 'points' in edge:
+            for p in edge['points']:
+                px = p['x'] if isinstance(p, dict) else p[0]
+                py = p['y'] if isinstance(p, dict) else p[1]
+                left = min(left, px)
+                right = max(right, px)
+                top = min(top, py)
+                bottom = max(bottom, py)
     minx, miny = min(0, left - 80), min(0, top - 80)
     width, height = math.ceil(right - minx + 100), math.ceil(bottom - miny + 100)
     if width > 16000 or height > 16000 or width * height > 40000000:
@@ -160,7 +182,7 @@ def render_manual(doc, output):
         if node['type'] == 'decision' and side in ('ne','nw','se','sw'):
             return (x+(-1 if 'w' in side else 1)*w/4,y+(-1 if 'n' in side else 1)*h/4)
         dx = {'w':-1,'e':1,'n':0,'s':0,'nw':-0.65,'ne':0.65,'sw':-0.65,'se':0.65}[side]
-        dy = {'w':0,'e':0,'n':-1,'s':1,'nw':-0.65,'ne':-0.65,'sw':0.65,'se':0.65}[side]
+        dy = {'w':0,'e':0,'n':-1,'s':1,'nw':-0.65,'ne':-0.65,'sw':-0.65,'se':0.65}[side]
         if node['type'] in ('start','end'):
             scale = 1 / math.hypot(dx,dy)
             dx,dy = dx*scale,dy*scale
@@ -172,10 +194,18 @@ def render_manual(doc, output):
         default_b = 'w' if default_a=='e' else 'e' if default_a=='w' else 'n' if default_a=='s' else 's'
         x1,y1 = anchor(a,edge.get('from_port',default_a))
         x2,y2 = anchor(b,edge.get('to_port',default_b))
-        ET.SubElement(svg,'path',{'d':f'M {x1:.2f} {y1:.2f} L {x2:.2f} {y2:.2f}','fill':'none','stroke':'#000000','stroke-width':'1.7','marker-end':'url(#arrow)'})
+        pts = [(x1, y1)]
+        if 'points' in edge:
+            for p in edge['points']:
+                px = p['x'] if isinstance(p, dict) else p[0]
+                py = p['y'] if isinstance(p, dict) else p[1]
+                pts.append((float(px), float(py)))
+        pts.append((x2, y2))
+        d_path = 'M ' + ' L '.join(f'{px:.2f} {py:.2f}' for px, py in pts)
+        ET.SubElement(svg,'path',{'d':d_path,'fill':'none','stroke':'#000000','stroke-width':'1.7','marker-end':'url(#arrow)'})
         if edge.get('label'):
             label_lines = edge['label'].splitlines()
-            mx,my=(x1+x2)/2,(y1+y2)/2-8
+            mx,my=(pts[0][0]+pts[1][0])/2,(pts[0][1]+pts[1][1])/2-8
             lw=max(small_font.getlength(line) for line in label_lines)+10
             lh=len(label_lines)*16+5
             ET.SubElement(svg,'rect',{'x':f'{mx-lw/2:.2f}','y':f'{my-lh+5:.2f}','width':f'{lw:.2f}','height':str(lh),'fill':'white'})
@@ -194,7 +224,7 @@ def render_manual(doc, output):
             skew=min(18,w/7)
             ET.SubElement(svg,'polygon',dict(attrs,points=f'{x-w/2+skew},{y-h/2} {x+w/2},{y-h/2} {x+w/2-skew},{y+h/2} {x-w/2},{y+h/2}'))
         else:
-            ET.SubElement(svg,'rect',dict(attrs,x=str(x-w/2),y=str(y-h/2),width=str(w),height=str(h),rx='6'))
+            ET.SubElement(svg,'rect',dict(attrs,x=str(x-w/2),y=str(y-h/2),width=str(w),height=str(h)))
         lines=node['lines']
         for j,line in enumerate(lines):
             t=ET.SubElement(svg,'text',{'x':str(x),'y':f'{y-(len(lines)-1)*10+j*20+5:.2f}','font-family':'DejaVu Sans','font-size':'15','text-anchor':'middle','fill':'#000000'})
