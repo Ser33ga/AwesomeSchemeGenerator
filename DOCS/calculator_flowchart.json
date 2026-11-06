@@ -1,0 +1,283 @@
+{
+  "mode": "manual",
+  "nodes": [
+    {
+      "id": "start",
+      "type": "start",
+      "text": "Начало",
+      "position": { "x": 700, "y": 60 }
+    },
+    {
+      "id": "prompt",
+      "type": "process",
+      "text": "Вывести приглашение\nк вводу выражения",
+      "position": { "x": 700, "y": 200 }
+    },
+    {
+      "id": "input",
+      "type": "input_output",
+      "text": "Ввести x, c, y\nscanf(\"%f%c%f\")",
+      "position": { "x": 700, "y": 360 }
+    },
+    {
+      "id": "check_fmt",
+      "type": "decision",
+      "text": "Ввод корректен?\n(rc == 3)",
+      "position": { "x": 700, "y": 520 }
+    },
+    {
+      "id": "q_check",
+      "type": "decision",
+      "text": "Первый символ — q?",
+      "position": { "x": 300, "y": 520 }
+    },
+    {
+      "id": "end",
+      "type": "end",
+      "text": "Конец",
+      "position": { "x": 60, "y": 520 }
+    },
+    {
+      "id": "err_fmt",
+      "type": "input_output",
+      "text": "Вывести сообщение\nоб ошибке формата",
+      "position": { "x": 300, "y": 720 }
+    },
+    {
+      "id": "op",
+      "type": "decision",
+      "text": "Операция c?",
+      "position": { "x": 700, "y": 720 }
+    },
+    {
+      "id": "out_plus",
+      "type": "input_output",
+      "text": "Вывести x + y",
+      "position": { "x": 40, "y": 900 }
+    },
+    {
+      "id": "out_minus",
+      "type": "input_output",
+      "text": "Вывести x - y",
+      "position": { "x": 280, "y": 900 }
+    },
+    {
+      "id": "out_mul",
+      "type": "input_output",
+      "text": "Вывести x * y",
+      "position": { "x": 520, "y": 900 }
+    },
+    {
+      "id": "div_check",
+      "type": "decision",
+      "text": "y = 0?",
+      "position": { "x": 770, "y": 900 }
+    },
+    {
+      "id": "mod_check",
+      "type": "decision",
+      "text": "y = 0?",
+      "position": { "x": 1260, "y": 900 }
+    },
+    {
+      "id": "out_pow",
+      "type": "input_output",
+      "text": "Вывести x^y\n(pow)",
+      "position": { "x": 1620, "y": 900 }
+    },
+    {
+      "id": "out_err",
+      "type": "input_output",
+      "text": "Вывести: неизвестная\nоперация",
+      "position": { "x": 1880, "y": 900 }
+    },
+    {
+      "id": "out_div",
+      "type": "input_output",
+      "text": "Вывести x / y",
+      "position": { "x": 660, "y": 1120 }
+    },
+    {
+      "id": "err_div",
+      "type": "input_output",
+      "text": "Вывести: деление\nна ноль",
+      "position": { "x": 880, "y": 1120 }
+    },
+    {
+      "id": "out_mod",
+      "type": "input_output",
+      "text": "Вывести x % y",
+      "position": { "x": 1140, "y": 1120 }
+    },
+    {
+      "id": "err_mod",
+      "type": "input_output",
+      "text": "Вывести: деление\nна ноль",
+      "position": { "x": 1380, "y": 1120 }
+    }
+  ],
+  "edges": [
+    { "from": "start", "to": "prompt", "from_port": "s", "to_port": "n" },
+    { "from": "prompt", "to": "input", "from_port": "s", "to_port": "n" },
+    { "from": "input", "to": "check_fmt", "from_port": "s", "to_port": "n" },
+    { "from": "check_fmt", "to": "q_check", "label": "Нет", "from_port": "w", "to_port": "e" },
+    { "from": "check_fmt", "to": "op", "label": "Да", "from_port": "s", "to_port": "n" },
+    { "from": "q_check", "to": "end", "label": "Да", "from_port": "w", "to_port": "e" },
+    { "from": "q_check", "to": "err_fmt", "label": "Нет", "from_port": "s", "to_port": "n" },
+    {
+      "from": "err_fmt",
+      "to": "prompt",
+      "from_port": "w",
+      "to_port": "w",
+      "points": [ { "x": -120, "y": 720 }, { "x": -120, "y": 200 } ]
+    },
+    {
+      "from": "op",
+      "to": "out_plus",
+      "label": "+",
+      "from_port": "s",
+      "to_port": "n",
+      "points": [ { "x": 700, "y": 815 }, { "x": 40, "y": 815 } ]
+    },
+    {
+      "from": "op",
+      "to": "out_minus",
+      "label": "-",
+      "from_port": "s",
+      "to_port": "n",
+      "points": [ { "x": 700, "y": 815 }, { "x": 280, "y": 815 } ]
+    },
+    {
+      "from": "op",
+      "to": "out_mul",
+      "label": "*",
+      "from_port": "s",
+      "to_port": "n",
+      "points": [ { "x": 700, "y": 815 }, { "x": 520, "y": 815 } ]
+    },
+    {
+      "from": "op",
+      "to": "div_check",
+      "label": "/",
+      "from_port": "s",
+      "to_port": "n",
+      "points": [ { "x": 700, "y": 815 }, { "x": 770, "y": 815 } ]
+    },
+    {
+      "from": "op",
+      "to": "mod_check",
+      "label": "%",
+      "from_port": "s",
+      "to_port": "n",
+      "points": [ { "x": 700, "y": 815 }, { "x": 1260, "y": 815 } ]
+    },
+    {
+      "from": "op",
+      "to": "out_pow",
+      "label": "^",
+      "from_port": "s",
+      "to_port": "n",
+      "points": [ { "x": 700, "y": 815 }, { "x": 1620, "y": 815 } ]
+    },
+    {
+      "from": "op",
+      "to": "out_err",
+      "label": "иначе",
+      "from_port": "s",
+      "to_port": "n",
+      "points": [ { "x": 700, "y": 815 }, { "x": 1880, "y": 815 } ]
+    },
+    {
+      "from": "div_check",
+      "to": "out_div",
+      "label": "Нет",
+      "from_port": "s",
+      "to_port": "n",
+      "points": [ { "x": 660, "y": 960 } ]
+    },
+    {
+      "from": "div_check",
+      "to": "err_div",
+      "label": "Да",
+      "from_port": "e",
+      "to_port": "n",
+      "points": [ { "x": 880, "y": 900 } ]
+    },
+    {
+      "from": "mod_check",
+      "to": "out_mod",
+      "label": "Нет",
+      "from_port": "s",
+      "to_port": "n",
+      "points": [ { "x": 1140, "y": 960 } ]
+    },
+    {
+      "from": "mod_check",
+      "to": "err_mod",
+      "label": "Да",
+      "from_port": "e",
+      "to_port": "n",
+      "points": [ { "x": 1380, "y": 900 } ]
+    },
+    {
+      "from": "out_plus",
+      "to": "input",
+      "from_port": "s",
+      "to_port": "e",
+      "points": [ { "x": 40, "y": 1400 }, { "x": 2100, "y": 1400 }, { "x": 2100, "y": 360 } ]
+    },
+    {
+      "from": "out_minus",
+      "to": "input",
+      "from_port": "s",
+      "to_port": "e",
+      "points": [ { "x": 280, "y": 1400 }, { "x": 2100, "y": 1400 }, { "x": 2100, "y": 360 } ]
+    },
+    {
+      "from": "out_mul",
+      "to": "input",
+      "from_port": "s",
+      "to_port": "e",
+      "points": [ { "x": 520, "y": 1400 }, { "x": 2100, "y": 1400 }, { "x": 2100, "y": 360 } ]
+    },
+    {
+      "from": "out_div",
+      "to": "input",
+      "from_port": "s",
+      "to_port": "e",
+      "points": [ { "x": 660, "y": 1400 }, { "x": 2100, "y": 1400 }, { "x": 2100, "y": 360 } ]
+    },
+    {
+      "from": "err_div",
+      "to": "input",
+      "from_port": "s",
+      "to_port": "e",
+      "points": [ { "x": 880, "y": 1400 }, { "x": 2100, "y": 1400 }, { "x": 2100, "y": 360 } ]
+    },
+    {
+      "from": "out_mod",
+      "to": "input",
+      "from_port": "s",
+      "to_port": "e",
+      "points": [ { "x": 1140, "y": 1400 }, { "x": 2100, "y": 1400 }, { "x": 2100, "y": 360 } ]
+    },
+    {
+      "from": "err_mod",
+      "to": "input",
+      "from_port": "s",
+      "to_port": "e",
+      "points": [ { "x": 1380, "y": 1400 }, { "x": 2100, "y": 1400 }, { "x": 2100, "y": 360 } ]
+    },
+    {
+      "from": "out_pow",
+      "to": "input",
+      "from_port": "s",
+      "to_port": "e",
+      "points": [ { "x": 1620, "y": 1400 }, { "x": 2100, "y": 1400 }, { "x": 2100, "y": 360 } ]
+    },
+    {
+      "from": "out_err",
+      "to": "input",
+      "from_port": "s",
+      "to_port": "e",
+      "points": [ { "x": 1880, "y": 1400 }, { "x": 2100, "y": 1400 }, { "x":
